@@ -169,3 +169,13 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Coverage
+.coverage
+htmlcov
+
+# PyCharm
+.idea
+
+# VSCode
+.vscode
