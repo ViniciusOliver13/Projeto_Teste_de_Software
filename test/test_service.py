@@ -14,31 +14,31 @@ class TestProntoSocorroService(unittest.TestCase):
         self.ps_service = ProntoSocorroService(self.paciente_repo, self.atendimento_repo)
         self.fila = FilaAtendimento()
 
-    def test_rtb_risco_azul(self):
+    def test_risco_azul(self):
         """RTB: Paciente sem critério de gravidade"""
 
         ficha = FichaAnalise(risco_morte=False, gravidade_alta=False, gravidade_moderada=False, gravidade_baixa=False)
         self.assertEqual(self.ps_service.classificar_risco(ficha), Risco.AZUL)
 
-    def test_rt1_risco_verde(self):
+    def test_risco_verde(self):
         """RT1: Paciente com gravidade baixa"""
 
         ficha = FichaAnalise(risco_morte=False, gravidade_alta=False, gravidade_moderada=False, gravidade_baixa=True)
         self.assertEqual(self.ps_service.classificar_risco(ficha), Risco.VERDE)
 
-    def test_rt2_risco_laranja(self):
+    def test_risco_laranja(self):
         """RT2: Paciente com gravidade moderada"""
 
         ficha = FichaAnalise(risco_morte=False, gravidade_alta=False, gravidade_moderada=True, gravidade_baixa=False)
         self.assertEqual(self.ps_service.classificar_risco(ficha), Risco.LARANJA)
 
-    def test_rt3_risco_amarelo(self):
+    def test_risco_amarelo(self):
         """RT3: Paciente com gravidade alta"""
 
         ficha = FichaAnalise(risco_morte=False, gravidade_alta=True, gravidade_moderada=False, gravidade_baixa=False)
         self.assertEqual(self.ps_service.classificar_risco(ficha), Risco.AMARELO)
 
-    def test_rt4_risco_vermelho(self):
+    def test_risco_vermelho(self):
         """RT4: Paciente com risco de morte"""
         ficha = FichaAnalise(risco_morte=True, gravidade_alta=False, gravidade_moderada=False, gravidade_baixa=False)
         self.assertEqual(self.ps_service.classificar_risco(ficha), Risco.VERMELHO)
@@ -46,8 +46,9 @@ class TestProntoSocorroService(unittest.TestCase):
     
 
     # Os testes abaixo cobrem o RF3: Gerenciar Fila de Atendimento 
-    def test_rtb_g1_h3_maior_risco_primeiro(self):
+    def test_paciente_maior_risco_primeiro(self):
         """RTB: Paciente com maior risco deve ser atendido primeiro"""
+
         paciente1 = self.ps_service.registrar_paciente("Carlos", "11111111111", "carlos@teste.com", "10/01/1980")
         paciente2 = self.ps_service.registrar_paciente("Bruna", "22222222222", "bruna@teste.com", "23/09/1995")
 
@@ -60,7 +61,7 @@ class TestProntoSocorroService(unittest.TestCase):
         proximo = self.ps_service.chamar_proximo()
         self.assertEqual(proximo, atendimento2)  
 
-    """def test_rt1_g2_h4_mesmo_risco_ordem_chegada(self):
+    """def test__mesmo_risco_ordem_chegada(self):
         RT1: Se os pacientes tiverem o mesmo risco, o primeiro a chegar deve ser chamado primeiro
         paciente1 = Paciente("Diego", "55555555555", "diego@teste.com", "20/03/1985")
         paciente2 = Paciente("Fernanda", "66666666666", "fernanda@teste.com", "11/07/1990")
@@ -75,8 +76,8 @@ class TestProntoSocorroService(unittest.TestCase):
         self.assertEqual(proximo, atendimento1)  
     """
 
-    def test_rt2_g3_h3_fila_mantem_ordem_apos_remocao(self):
-        """RT2: Após remoção, a fila continua na ordem correta"""
+    def test_chamada_paciente_fila_mantem_ordem_(self):
+        """RT2: Após chamada de um paciente, a fila continua na ordem correta"""
 
         paciente1 = self.ps_service.registrar_paciente("Lucas", "55555555555", "lucas@teste.com", "15/08/1993")
         paciente2 = self.ps_service.registrar_paciente("Fernanda", "66666666666", "fernanda@teste.com", "02/11/1990")
@@ -94,15 +95,16 @@ class TestProntoSocorroService(unittest.TestCase):
         proximo = self.ps_service.chamar_proximo()
         self.assertEqual(proximo, atendimento2)  
 
-    def test_rt3_g1_h1_fila_vazia(self):
+    def test_chamada_fila_vazia(self):
         """RT3: Tentar chamar um paciente com uma fila vazia"""
 
         with self.assertRaises(Exception) as context:
             self.ps_service.chamar_proximo()
         self.assertIn("fila de atendimento", str(context.exception))
 
-    def test_rt4_g1_h2_um_paciente_na_fila(self):
+    def test_um_paciente_na_fila(self):
         """RT4: Com um único paciente na fila, ele deve ser chamado corretamente"""
+
         paciente = self.ps_service.registrar_paciente("Eduardo", "88888888888", "eduardo@teste.com", "11/03/1985")
         atendimento = self.ps_service.registrar_atendimento(paciente, Risco.VERDE)
 
@@ -111,7 +113,7 @@ class TestProntoSocorroService(unittest.TestCase):
         proximo = self.ps_service.chamar_proximo()
         self.assertEqual(proximo, atendimento)
 
-    """def test_rt5_g1_h4_multiplos_pacientes_riscos_iguais(self):
+    """def test_multiplos_pacientes_riscos_iguais(self):
         RT5: Com múltiplos pacientes na fila com o mesmo risco, o primeiro a chegar deve ser chamado primeiro
         paciente1 = self.ps_service.registrar_paciente("Amanda", "99999999999", "amanda@teste.com", "05/07/1982")
         atendimento1 = self.ps_service.registrar_atendimento(paciente1, Risco.AZUL)
@@ -126,12 +128,8 @@ class TestProntoSocorroService(unittest.TestCase):
     """
 
 
-
-
-
-
     # Os testes abaixo cobrem RF4: Chamar Próximo da Fila
-    def test_rtb_i3_j1_multiplo_pacientes_removido_corretamente(self):
+    def test_multiplos_pacientes_chamado_corretamente(self):
         """RTB: Múltiplos pacientes na fila, o de maior prioridade deve ser chamado primeiro"""
 
         paciente1 = Paciente("Alice", "11111111111", "alice@teste.com", "10/02/1990")  
@@ -151,15 +149,27 @@ class TestProntoSocorroService(unittest.TestCase):
         self.assertEqual(self.fila.tamanho(), 2) 
 
         
-    """def test_rt1_i1_j1_fila_vazia(self):
+    """def test_fila_vazia(self):
         RT1: Tentativa de remover paciente com fila vazia
         with self.assertRaises(FilaVaziaError) as context:
             self.fila.proximo()
         self.assertIn("fila de atendimento", str(context.exception))
     """
 
+    def test_remover_unico_paciente(self):
+        """RT2: Remover único paciente na fila"""
+
+        paciente1 = Paciente("Único", "12345678900", "unico@teste.com", "20/02/1990")
+        atendimento1 = Atendimento(paciente1, Risco.AMARELO)
+
+        self.fila.inserir(atendimento1)
+
+        chamado = self.fila.proximo() 
+        self.assertEqual(chamado, atendimento1)
+        self.assertEqual(self.fila.tamanho(), 0)  
+
     
-    """def test_rt3_i3_j2_fila_mantem_ordem_apos_remocao(self):
+    """def test_fila_mantem_ordem_apos_remocao(self):
         RT3: Após remoção, a fila mantém a ordem correta
         paciente1 = Paciente("Eduardo", "55555555555", "eduardo@teste.com", "05/06/1988")  
         paciente2 = Paciente("Fernanda", "66666666666", "fernanda@teste.com", "30/08/1993") 
@@ -178,7 +188,8 @@ class TestProntoSocorroService(unittest.TestCase):
         self.assertEqual(proximo, atendimento2)  
         self.assertEqual(self.fila.tamanho(), 1)  
         """
-    """def test_rt4_i3_j3_paciente_mesmo_risco(self):
+    
+    """def test_paciente_mesmo_risco(self):
         RT4: Remover paciente com risco igual aos outros
         paciente1 = Paciente("Hugo", "88888888888", "hugo@teste.com", "11/11/1975")
         paciente2 = Paciente("Isabela", "99999999999", "isabela@teste.com", "01/01/1990")

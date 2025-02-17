@@ -113,5 +113,5 @@ class EntitiesTest(unittest.TestCase):
         """RT13: Data de nascimento com caracteres especiais"""
 
         with self.assertRaises(ValidacaoError) as context:
-            Paciente("Ana", "55566677788", "ana@teste.com", "10/XX/2002")  
+            Paciente("Maria", "11111111111", "maria@teste.com", "10/XX/2002")  
         self.assertIn("Data de nascimento inválida", context.exception.message)
