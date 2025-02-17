@@ -12,7 +12,7 @@ class TestAtendimentoRepository(unittest.TestCase):
         self.atendimento_repo = AtendimentoRepository(self.paciente_repo)
         self.ps_service = ProntoSocorroService(self.paciente_repo, self.atendimento_repo)
 
-    def test_rtb_k2_paciente_sem_atendimentos(self):
+    def test_paciente_sem_atendimentos(self):
         """RTB: Paciente cadastrado, mas sem atendimentos registrados"""
 
         paciente = self.ps_service.registrar_paciente("Carlos", "11111111111", "carlos@teste.com", "15/06/1990")
@@ -20,7 +20,7 @@ class TestAtendimentoRepository(unittest.TestCase):
         historico = self.ps_service.buscar_historico(paciente)
         self.assertEqual(historico, [])  
 
-    def test_rt1_k1_paciente_nao_cadastrado(self):
+    def test_historico_paciente_nao_cadastrado(self):
         """RT1: Tentar buscar o histórico de paciente não cadastrado"""
 
         with self.assertRaises(PacienteNaoCadastradoError) as context:
@@ -33,8 +33,10 @@ class TestAtendimentoRepository(unittest.TestCase):
         self.assertIn("Paciente não cadastrado", str(context.exception))
 
 
-    def test_rt2_k3_paciente_com_atendimentos(self):
-        """RT2: Paciente cadastrado com atendimentos registrados"""
+    def test_historico_paciente_com_atendimentos(self):
+        """RT2: Paciente cadastrado com atendimentos registrados
+           Provavelmente onde tem um erro no programa 
+        """
 
         paciente = self.ps_service.registrar_paciente("Fernanda", "33333333333", "fernanda@teste.com", "20/04/1987")
         
