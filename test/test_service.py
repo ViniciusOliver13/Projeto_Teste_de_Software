@@ -129,7 +129,7 @@ class TestProntoSocorroService(unittest.TestCase):
 
 
     # Os testes abaixo cobrem RF4: Chamar Próximo da Fila
-    def test_rtb_um_paciente_removido_corretamente(self):
+    def test_um_paciente_removido_corretamente(self):
         """RTB: Um único paciente está na fila e será removido corretamente"""
 
         paciente = self.ps_service.registrar_paciente("Fernanda", "33333333333", "fernanda@teste.com", "20/04/1987")
@@ -141,14 +141,14 @@ class TestProntoSocorroService(unittest.TestCase):
         self.assertEqual(proximo, atendimento)
         self.assertEqual(self.ps_service.fila_atendimento.tamanho(), 0)
 
-    def test_rt1_fila_vazia_gera_erro(self):
+    def test_fila_vazia_gera_erro(self):
         """RT1: Se a fila está vazia, tentar remover um paciente gera erro"""
 
         with self.assertRaises(Exception) as context:
             self.ps_service.chamar_proximo()
         self.assertIn("fila de atendimento", str(context.exception))
 
-    def test_rt2_remocao_paciente_multiplo(self):
+    def test_remocao_paciente_multiplo(self):
         """RT2: Se houver múltiplos pacientes, a remoção deve ser correta"""
 
         paciente1 = self.ps_service.registrar_paciente("Carlos", "44444444444", "carlos@teste.com", "10/01/1980")
@@ -164,7 +164,7 @@ class TestProntoSocorroService(unittest.TestCase):
         self.assertEqual(chamado, atendimento1)  # Paciente com maior prioridade removido primeiro
         self.assertEqual(self.ps_service.fila_atendimento.tamanho(), 1)  # Ainda há um paciente na fila
 
-    def test_rt3_fila_mantem_ordem_apos_remocao(self):
+    def test_fila_mantem_ordem_apos_remocao(self):
         """RT3: Após remoção, a fila mantém a ordem correta"""
 
         paciente1 = self.ps_service.registrar_paciente("Lucas", "66666666666", "lucas@teste.com", "15/08/1993")
